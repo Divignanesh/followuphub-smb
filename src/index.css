@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+/*
+  FollowUpHub for small business.
+
+  Colours from the Nitux CRM shot (Ofspace): one indigo (#5755dd) for every
+  action, and a wash of lavender into pink used only inside panels. Layout
+  and component language from the Flowa CRM shot (Vektora): white cards,
+  soft grey inset panels holding product UI, a segmented nav. The page base
+  is plain white. Every text pair is checked to WCAG AA.
+*/
+@theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-page: #ffffff;
+  --color-soft: #f6f5fa;       /* inset panels and section bands */
+  --color-soft-2: #efedf6;     /* the nav track, inputs */
+  --color-line: #e7e3f0;
+  --color-grid: #ded4e8;
+
+  --color-ink: #17142b;        /* 17.6:1 on white */
+  --color-ink-soft: #5e5a73;   /* 6.6:1 on white, 6.1:1 on soft */
+
+  --color-brand: #5755dd;      /* indigo: white on it 5.7:1, as text 5.7:1 */
+  --color-brand-deep: #4441c4;
+  --color-brand-tint: #eeedfc;
+
+  --color-lavender: #f4edfb;
+  --color-blush: #f6d3e0;
+  --color-pink: #e2799a;       /* chart accent only */
+  --color-violet: #b9a8ee;     /* chart accent only */
+  --color-green: #1f9d6b;      /* up trend: 4.6:1 on white */
+  --color-red: #c43c5c;        /* down trend / missed: 5.1:1 on white */
+  --color-red-tint: #fde8ee;
+  --color-green-tint: #e2f6ec;
+  --color-gold: #f5b83d;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  body {
+    @apply bg-page text-ink font-sans antialiased;
+    overflow-x: clip;
+  }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  ::selection { background: color-mix(in oklab, var(--color-brand) 22%, transparent); }
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+  button, a, [role="button"], summary { cursor: pointer; }
+  .skip-link:not(:focus) {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+}
+
+@layer utilities {
+  .container-x { @apply mx-auto w-full max-w-[72rem] px-4 sm:px-8; }
+
+  .t-display { @apply text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.04em] sm:text-[3.4rem] lg:text-[4.1rem]; }
+  .t-h2      { @apply text-[2rem] font-semibold leading-[1.1] tracking-[-0.035em] sm:text-[2.75rem]; }
+  .t-h3      { @apply text-[18px] font-semibold leading-tight tracking-[-0.02em]; }
+  .t-lede    { @apply text-[16.5px] leading-[1.6] tracking-[-0.01em] sm:text-[17px]; }
+  .t-body    { @apply text-[15px] leading-[1.6]; }
+  .t-meta    { @apply text-[13px] leading-snug; }
+
+  .section-y { @apply py-20 sm:py-28; }
+
+  /* Soft violet-tinted shadows, as on the reference's floating cards. */
+  .shadow-float { box-shadow: 0 1px 2px rgb(23 20 43 / 0.04), 0 18px 40px -16px rgb(87 85 221 / 0.22); }
+  .shadow-card  { box-shadow: 0 1px 2px rgb(23 20 43 / 0.05), 0 6px 18px -10px rgb(23 20 43 / 0.12); }
+
+  /* The hero panel: lavender into pink, with a faint grid ruled over it. */
+  .hero-wash {
+    background:
+      radial-gradient(60% 55% at 50% 100%, rgb(246 211 224 / 0.9), transparent 70%),
+      radial-gradient(45% 50% at 85% 20%, rgb(220 210 250 / 0.7), transparent 70%),
+      linear-gradient(180deg, var(--color-lavender), #f6eef8);
+  }
+  .grid-lines {
+    background-image:
+      linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+    background-size: 132px 132px;
+    mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, black 30%, transparent 85%);
+  }
+
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /*
+    Magic UI's Border Beam (dillionverma, MIT): a short gradient travelling
+    the border of its parent. The parent needs position:relative and a radius.
+  */
+  .border-beam {
+    --size: 200px;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1.5px solid transparent;
+    overflow: hidden; /* the light travels outside the box; keep it out of layout */
+    mask: linear-gradient(transparent, transparent), linear-gradient(#fff, #fff);
+    mask-clip: padding-box, border-box;
+    mask-composite: intersect;
+  }
+  .border-beam::after {
+    content: "";
+    position: absolute;
+    aspect-ratio: 1;
+    width: var(--size);
+    background: linear-gradient(to left, var(--color-brand), var(--color-pink), transparent);
+    offset-anchor: 90% 50%;
+    offset-path: rect(0 auto auto 0 round var(--size));
+    animation: fuh-border-beam 8s linear infinite;
+  }
+  @keyframes fuh-border-beam { to { offset-distance: 100%; } }
+
+  /* Flowa's section label: a short indigo bar beside a quiet word or two. */
+  .eyebrow { @apply inline-flex items-center gap-2.5 text-[14px] text-ink; }
+  .eyebrow::before { content: ""; width: 4px; height: 18px; border-radius: 2px; background: var(--color-brand); }
+
+  /* Product panels: the soft grey well a product UI sits in. */
+  .well { @apply rounded-[1.5rem] bg-soft; box-shadow: inset 0 0 0 1px rgb(23 20 43 / 0.04); }
+
+  /* Gentle bob for floating elements. */
+  .float-slow { animation: fuh-float 7s ease-in-out infinite; }
+  @keyframes fuh-float { 50% { transform: translateY(-8px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .border-beam { display: none; }
+    .float-slow { animation: none; }
+  }
+}
