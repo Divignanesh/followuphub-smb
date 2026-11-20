@@ -39,8 +39,8 @@ export function AppWindow({ active, title, children, className, rows = 9 }: { ac
   const start = Math.max(0, Math.min(at - 3, MODULES_NAV.length - rows));
   const nav = MODULES_NAV.slice(start, start + rows);
   return (
-    <div className={cx("flex overflow-hidden rounded-2xl border border-line bg-page shadow-float", className)}>
-      <aside className="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-line bg-soft/60 py-3 sm:flex">
+    <div className={cx("flex overflow-hidden rounded-2xl bg-page shadow-float", className)}>
+      <aside className="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-line bg-soft py-3 sm:flex">
         <img src="/images/brand/mark-brand.svg" alt="" className="mb-3 size-7" />
         {nav.map(({ icon: Icon, label }) => (
           <span key={label} className={cx("grid size-9 place-items-center rounded-lg", label === active ? "bg-page text-brand shadow-card" : "text-ink-soft/70")}>
@@ -49,13 +49,8 @@ export function AppWindow({ active, title, children, className, rows = 9 }: { ac
         ))}
       </aside>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center justify-between border-b border-line px-4 py-3">
+        <div className="flex items-center justify-between border-b border-line bg-page px-4 py-3">
           <p className="text-[13.5px] font-semibold">{title}</p>
-          <span className="flex gap-1">
-            <span className="size-2 rounded-full bg-line" />
-            <span className="size-2 rounded-full bg-line" />
-            <span className="size-2 rounded-full bg-line" />
-          </span>
         </div>
         <div className="p-4">{children}</div>
       </div>
@@ -63,7 +58,7 @@ export function AppWindow({ active, title, children, className, rows = 9 }: { ac
   );
 }
 
-const AVATAR_TONES = ["bg-brand-tint text-brand", "bg-red-tint text-red", "bg-green-tint text-green", "bg-[#fff3dc] text-[#8a5a00]", "bg-[#f1e9ff] text-[#6b3fc4]"];
+const AVATAR_TONES = ["bg-brand-tint text-brand", "bg-red-tint text-red", "bg-green-tint text-green", "bg-amber-tint text-amber-ink", "bg-[#e6f0fa] text-[#1f5c94]"];
 
 export function Avatar({ name, i = 0, size = "size-8" }: { name: string; i?: number; size?: string }) {
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2);
@@ -90,7 +85,7 @@ const CHIP = {
   brand: "bg-brand-tint text-brand",
   green: "bg-green-tint text-green",
   red: "bg-red-tint text-red",
-  amber: "bg-[#fff3dc] text-[#8a5a00]",
+  amber: "bg-amber-tint text-amber-ink",
   grey: "bg-soft-2 text-ink-soft",
 } as const;
 

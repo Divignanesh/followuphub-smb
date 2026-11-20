@@ -1,7 +1,10 @@
 import { MotionConfig } from "framer-motion";
 import { Nav } from "./components/Nav";
+import { TrialBar } from "./components/TrialBar";
+import { TrialPopup } from "./components/TrialPopup";
 import { FAQ, FinalCTA, Footer } from "./sections/Closing";
 import { FeatureRows } from "./sections/FeatureRows";
+import { AllInOne } from "./sections/AllInOne";
 import { Bento } from "./sections/Bento";
 import { Hero } from "./sections/Hero";
 import { Included, Pricing } from "./sections/Included";
@@ -19,9 +22,10 @@ export default function App() {
       <main id="main">
         <Hero />
         <WorksWith />
-        <Bento />
         <Trades />
+        <Bento />
         <FeatureRows />
+        <AllInOne />
         <Included />
         <Pricing />
         <Testimonials />
@@ -29,6 +33,8 @@ export default function App() {
         <FinalCTA />
       </main>
       <Footer />
+      <TrialBar />
+      <TrialPopup />
     </MotionConfig>
   );
 }

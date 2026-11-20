@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="FollowUpHub">
-  <g fill="none" stroke="#5755dd" stroke-width="5" stroke-linecap="round">
+  <g fill="none" stroke="#1a6b5a" stroke-width="5" stroke-linecap="round">
     <path d="M37.69 11.75 A22 22 0 1 1 12.06 42.30"/>
     <path d="M12.06 42.30 A22 22 0 0 1 37.69 11.75" stroke-dasharray="3.5 7"/>
   </g>
-  <circle cx="37.69" cy="11.75" r="4.8" fill="#5755dd"/>
+  <circle cx="37.69" cy="11.75" r="4.8" fill="#1a6b5a"/>
 </svg>

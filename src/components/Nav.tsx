@@ -21,6 +21,16 @@ const links = [
 export function Nav() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("top");
+  const [scrolled, setScrolled] = useState(false);
+
+  // A hairline under the bar once the page has moved (sentinel, not a scroll listener).
+  useEffect(() => {
+    const sentinel = document.getElementById("nav-sentinel");
+    if (!sentinel) return;
+    const io = new IntersectionObserver(([e]) => setScrolled(!e.isIntersecting));
+    io.observe(sentinel);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     const els = links.map((l) => document.getElementById(l.id)).filter((e): e is HTMLElement => !!e);
@@ -36,14 +46,16 @@ export function Nav() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-page/80 backdrop-blur-md">
+    <>
+    <span id="nav-sentinel" aria-hidden="true" className="absolute top-0 h-px w-px" />
+    <header className={cx("sticky top-0 z-50 border-b bg-page/85 backdrop-blur-md transition-colors", scrolled ? "border-line" : "border-transparent")}>
       <div className="container-x">
         <nav aria-label="Primary" className="flex h-[76px] items-center justify-between gap-6">
           <a href="#top" aria-label="FollowUpHub home" className="rounded-lg">
             <Logo eager />
           </a>
 
-          <ul className="hidden items-center rounded-xl bg-soft-2 p-1 lg:flex">
+          <ul className="hidden items-center rounded-xl bg-soft p-1 ring-1 ring-inset ring-line lg:flex">
             {links.map((l) => (
               <li key={l.id} className="relative">
                 {active === l.id && (
@@ -58,13 +70,18 @@ export function Nav() {
                 </a>
               </li>
             ))}
+            <li>
+              <a href={SITE.realEstate} {...external(SITE.realEstate)} className="block rounded-lg px-4 py-2 text-[14.5px] text-ink-soft transition-colors hover:text-ink">
+                For Real Estate
+              </a>
+            </li>
           </ul>
 
           <div className="hidden items-center gap-3 lg:flex">
-            <a href={SITE.app} {...external(SITE.app)} className="rounded-xl px-4 py-2.5 text-[14.5px] font-medium text-ink shadow-card hover:bg-soft">
+            <a href={SITE.app} {...external(SITE.app)} className="rounded-xl px-4 py-2.5 text-[14.5px] font-medium text-ink ring-1 ring-inset ring-line-strong transition-colors hover:bg-soft">
               Log in
             </a>
-            <PillCta href="#pricing" size="md">Start free trial</PillCta>
+            <PillCta trial size="md">Start free trial</PillCta>
           </div>
 
           <button
@@ -87,7 +104,7 @@ export function Nav() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22, ease: EASE_OUT }}
-              className="mb-3 rounded-2xl border border-line bg-page p-3 shadow-float lg:hidden"
+              className="mb-3 rounded-2xl bg-page p-3 shadow-float lg:hidden"
             >
               <ul>
                 {links.map((l) => (
@@ -97,15 +114,21 @@ export function Nav() {
                     </a>
                   </li>
                 ))}
+                <li>
+                  <a href={SITE.realEstate} {...external(SITE.realEstate)} className="block rounded-xl px-4 py-3 text-[16px] hover:bg-soft">
+                    For Real Estate
+                  </a>
+                </li>
               </ul>
               <div className="mt-3 grid grid-cols-2 gap-2 border-t border-line pt-3">
                 <PillCta href={SITE.app} tone="outline" size="md">Log in</PillCta>
-                <PillCta href="#pricing" size="md">Start free trial</PillCta>
+                <PillCta trial size="md">Start free trial</PillCta>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
     </header>
+    </>
   );
 }

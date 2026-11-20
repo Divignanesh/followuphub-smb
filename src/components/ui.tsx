@@ -1,5 +1,5 @@
-import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -28,33 +28,44 @@ export function Logo({ tone = "ink", eager = false }: { tone?: "ink" | "cream"; 
   );
 }
 
+/** Opens the trial form from anywhere on the page (see TrialPopup). */
+export const OPEN_TRIAL = "fuh:open-trial";
+export function openTrial(founder = true) {
+  window.dispatchEvent(new CustomEvent(OPEN_TRIAL, { detail: { founder } }));
+}
+
 /**
- * The two calls to action, and only these two labels on the page:
- * "Start free trial" (sign up) and "Book a demo" (talk to us). Square-ish
- * 12px corners, as on the reference, not pills.
+ * The page's one call to action is "Start free trial". With `trial` set the
+ * button opens the trial form; without JS it falls back to the pricing
+ * section. Square-ish 12px corners, as on the reference, not pills.
  */
 export function PillCta({
   href,
+  trial = false,
   tone = "primary",
   size = "lg",
   className,
   children,
 }: {
-  href: string;
-  tone?: "primary" | "outline" | "light";
+  href?: string;
+  trial?: boolean;
+  tone?: "primary" | "outline" | "light" | "dark";
   size?: "md" | "lg";
   className?: string;
   children: ReactNode;
 }) {
   const skin = {
-    primary: "bg-brand text-white hover:bg-brand-deep shadow-[0_8px_20px_-10px_rgb(87_85_221/0.8)]",
+    primary: "bg-brand text-white hover:bg-brand-deep shadow-[0_8px_20px_-10px_rgb(26_107_90/0.8)]",
     outline: "border border-ink/80 bg-white/60 text-ink hover:bg-white",
     light: "bg-white text-ink hover:bg-brand-tint shadow-card",
+    dark: "bg-ink text-white hover:bg-brand-deep shadow-float",
   }[tone];
+  const to = trial ? "#pricing" : (href ?? "#pricing");
   return (
     <motion.a
-      href={href}
-      {...external(href)}
+      href={to}
+      {...external(to)}
+      onClick={trial ? (e) => { e.preventDefault(); openTrial(); } : undefined}
       whileTap={{ scale: 0.98 }}
       className={cx(
         "inline-flex items-center justify-center whitespace-nowrap rounded-xl font-medium tracking-[-0.01em] transition-colors duration-200",
@@ -66,6 +77,25 @@ export function PillCta({
       {children}
     </motion.a>
   );
+}
+
+/**
+ * Steps through `n` states every `ms`, only while the element is on screen
+ * and never under reduced motion (it rests on the first state). `offset`
+ * staggers neighbours so they don't all change at once.
+ */
+export function useCycle(n: number, ms: number, offset = 0) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { margin: "-10% 0px" });
+  const reduce = useReducedMotion();
+  const [i, setI] = useState(0);
+  const [started, setStarted] = useState(false);
+  useEffect(() => {
+    if (reduce || !inView) return;
+    const t = setTimeout(() => { setStarted(true); setI((v) => (v + 1) % n); }, started ? ms : ms + offset);
+    return () => clearTimeout(t);
+  }, [i, inView, reduce, n, ms, offset, started]);
+  return { ref, i, setI };
 }
 
 /** Section heading, centred as on the reference: title and one line under it. */

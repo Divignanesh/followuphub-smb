@@ -3,43 +3,47 @@
 /*
   FollowUpHub for small business.
 
-  Colours from the Nitux CRM shot (Ofspace): one indigo (#5755dd) for every
-  action, and a wash of lavender into pink used only inside panels. Layout
+  Colours follow the real estate site: one deep teal-green (#1a6b5a) for
+  every action, and a wash of mist into mint used only inside panels. Layout
   and component language from the Flowa CRM shot (Vektora): white cards,
-  soft grey inset panels holding product UI, a segmented nav. The page base
-  is plain white. Every text pair is checked to WCAG AA.
+  soft grey-green inset panels holding product UI, a segmented nav. The page
+  base is plain white. Every text pair is checked to WCAG AA.
 */
 @theme {
   --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --color-page: #ffffff;
-  --color-soft: #f6f5fa;       /* inset panels and section bands */
-  --color-soft-2: #efedf6;     /* the nav track, inputs */
-  --color-line: #e7e3f0;
-  --color-grid: #ded4e8;
+  --color-soft: #f4f7f5;       /* inset panels and section bands */
+  --color-soft-2: #e9efeb;     /* the nav track, inputs */
+  --color-line: #dce5e0;        /* hairlines and dividers */
+  --color-line-strong: #c9d6cf; /* card and window edges */
+  --color-grid: #cfe1d8;
 
-  --color-ink: #17142b;        /* 17.6:1 on white */
-  --color-ink-soft: #5e5a73;   /* 6.6:1 on white, 6.1:1 on soft */
+  --color-ink: #12201b;        /* 16.9:1 on white */
+  --color-ink-soft: #55625c;   /* 6.2:1 on white, 5.8:1 on soft */
 
-  --color-brand: #5755dd;      /* indigo: white on it 5.7:1, as text 5.7:1 */
-  --color-brand-deep: #4441c4;
-  --color-brand-tint: #eeedfc;
+  --color-brand: #1a6b5a;      /* teal: white on it 5.6:1, as text 5.6:1 */
+  --color-brand-deep: #123f36;
+  --color-brand-tint: #e2f1eb;
 
-  --color-lavender: #f4edfb;
-  --color-blush: #f6d3e0;
-  --color-pink: #e2799a;       /* chart accent only */
-  --color-violet: #b9a8ee;     /* chart accent only */
-  --color-green: #1f9d6b;      /* up trend: 4.6:1 on white */
-  --color-red: #c43c5c;        /* down trend / missed: 5.1:1 on white */
+  --color-mist: #eaf5f0;       /* panel wash, top */
+  --color-mint-soft: #cfeadf;  /* panel wash, bottom */
+  --color-mint: #5fbf98;       /* chart accent only */
+  --color-sage: #a9d6c3;       /* chart accent only */
+  --color-green: #1f9d6b;      /* success: 4.6:1 on white */
+  --color-red: #c43c5c;        /* missed: 5.1:1 on white */
   --color-red-tint: #fde8ee;
   --color-green-tint: #e2f6ec;
   --color-gold: #f5b83d;
+  --color-amber-tint: #fff3dc;
+  --color-amber-ink: #8a5a00;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
   html {
+    overflow-x: clip;
     scroll-behavior: smooth;
     scroll-padding-top: 6rem;
     -webkit-text-size-adjust: 100%;
@@ -82,18 +86,24 @@
   .t-body    { @apply text-[15px] leading-[1.6]; }
   .t-meta    { @apply text-[13px] leading-snug; }
 
-  .section-y { @apply py-20 sm:py-28; }
+  .section-y { @apply py-16 sm:py-20; }
 
-  /* Soft violet-tinted shadows, as on the reference's floating cards. */
-  .shadow-float { box-shadow: 0 1px 2px rgb(23 20 43 / 0.04), 0 18px 40px -16px rgb(87 85 221 / 0.22); }
-  .shadow-card  { box-shadow: 0 1px 2px rgb(23 20 43 / 0.05), 0 6px 18px -10px rgb(23 20 43 / 0.12); }
+  /* Soft green-tinted shadows, as on the reference's floating cards. */
+  /*
+    Edges: every surface carries a 1px edge drawn as the first shadow layer
+    (so it never shifts layout), then a green-tinted depth. A shadow never
+    stands in for an edge.
+  */
+  .shadow-card  { box-shadow: 0 0 0 1px var(--color-line-strong), 0 1px 2px rgb(18 63 54 / 0.06), 0 8px 24px -14px rgb(18 63 54 / 0.18); }
+  .shadow-float { box-shadow: 0 0 0 1px var(--color-line-strong), 0 2px 4px rgb(18 63 54 / 0.06), 0 24px 48px -20px rgb(18 63 54 / 0.28); }
+  .edge { box-shadow: 0 0 0 1px var(--color-line-strong); }
 
-  /* The hero panel: lavender into pink, with a faint grid ruled over it. */
+  /* The hero panel: mist into mint, with a faint grid ruled over it. */
   .hero-wash {
     background:
-      radial-gradient(60% 55% at 50% 100%, rgb(246 211 224 / 0.9), transparent 70%),
-      radial-gradient(45% 50% at 85% 20%, rgb(220 210 250 / 0.7), transparent 70%),
-      linear-gradient(180deg, var(--color-lavender), #f6eef8);
+      radial-gradient(60% 55% at 50% 100%, rgb(176 222 201 / 0.85), transparent 70%),
+      radial-gradient(45% 50% at 85% 20%, rgb(205 236 222 / 0.8), transparent 70%),
+      linear-gradient(180deg, var(--color-mist), #f1f8f4);
   }
   .grid-lines {
     background-image:
@@ -127,19 +137,44 @@
     position: absolute;
     aspect-ratio: 1;
     width: var(--size);
-    background: linear-gradient(to left, var(--color-brand), var(--color-pink), transparent);
+    background: linear-gradient(to left, var(--color-brand), var(--color-mint), transparent);
     offset-anchor: 90% 50%;
     offset-path: rect(0 auto auto 0 round var(--size));
     animation: fuh-border-beam 8s linear infinite;
   }
   @keyframes fuh-border-beam { to { offset-distance: 100%; } }
 
-  /* Flowa's section label: a short indigo bar beside a quiet word or two. */
+  /* Flowa's section label: a short green bar beside a quiet word or two. */
   .eyebrow { @apply inline-flex items-center gap-2.5 text-[14px] text-ink; }
   .eyebrow::before { content: ""; width: 4px; height: 18px; border-radius: 2px; background: var(--color-brand); }
 
   /* Product panels: the soft grey well a product UI sits in. */
-  .well { @apply rounded-[1.5rem] bg-soft; box-shadow: inset 0 0 0 1px rgb(23 20 43 / 0.04); }
+  .well { @apply rounded-[1.25rem] bg-soft; box-shadow: inset 0 0 0 1px rgb(18 32 27 / 0.07); }
+
+  /* A light sweep, for the founder's offer while it is unclaimed. */
+  .shine {
+    background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.75) 50%, transparent 65%);
+    background-size: 250% 100%;
+    animation: fuh-shine 2.6s ease-in-out infinite;
+  }
+  @keyframes fuh-shine { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+
+  /* Two rows of review cards drifting in opposite directions. */
+  .marquee { animation: fuh-marquee var(--dur, 80s) linear infinite; }
+  .marquee-rev { animation-direction: reverse; }
+  .marquee-wrap:hover .marquee, .marquee-wrap:focus-within .marquee { animation-play-state: paused; }
+  @keyframes fuh-marquee { to { transform: translateX(-50%); } }
+
+  /* Shimmer Button (Magic UI): the spark slides and spins round the edge. */
+  .shimmer-slide { animation: fuh-shimmer-slide var(--speed) ease-in-out infinite alternate; }
+  .spin-around { animation: fuh-spin-around calc(var(--speed) * 2) infinite linear; }
+  @keyframes fuh-shimmer-slide { to { transform: translate(calc(100cqw - 100%), 0); } }
+  @keyframes fuh-spin-around {
+    0% { transform: translateZ(0) rotate(0); }
+    15%, 35% { transform: translateZ(0) rotate(90deg); }
+    65%, 85% { transform: translateZ(0) rotate(270deg); }
+    100% { transform: translateZ(0) rotate(360deg); }
+  }
 
   /* Gentle bob for floating elements. */
   .float-slow { animation: fuh-float 7s ease-in-out infinite; }
@@ -148,5 +183,8 @@
   @media (prefers-reduced-motion: reduce) {
     .border-beam { display: none; }
     .float-slow { animation: none; }
+    .shine { display: none; }
+    .shimmer-slide, .spin-around { animation: none; }
+    .marquee { animation: none; }
   }
 }
