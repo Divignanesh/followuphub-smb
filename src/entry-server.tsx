@@ -1,5 +1,5 @@
 import { renderToString } from "react-dom/server";
-import App from "./App";
+import App, { type RoutePath } from "./App";
 import { FAQS, PLAN, SITE } from "./lib/content";
 
 const TITLE = "FollowUpHub for Small Business | Calls, Bookings and Payments in One App";
@@ -47,22 +47,64 @@ const schema = {
   ],
 };
 
-export function renderHead(): string {
+const homeSchema = JSON.stringify(schema).replace(/</g, "\\u003c");
+const legalSchema = (name: string, path: string) =>
+  JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name,
+    url: `${SITE.url}${path}`,
+    isPartOf: { "@type": "WebSite", name: SITE.name, url: SITE.url },
+  }).replace(/</g, "\\u003c");
+
+export type RouteMeta = {
+  path: RoutePath;
+  /** Output file, relative to dist/ */
+  out: string;
+  title: string;
+  description: string;
+  canonical: string;
+  schema: string;
+};
+
+export const ROUTES: RouteMeta[] = [
+  { path: "/", out: "index.html", title: TITLE, description: DESCRIPTION, canonical: SITE.url, schema: homeSchema },
+  {
+    path: "/privacy",
+    out: "privacy/index.html",
+    title: "Privacy policy | FollowUpHub",
+    description:
+      "What personal information FollowUpHub collects, why, who processes it and where, how long we keep it, and how to exercise your rights.",
+    canonical: `${SITE.url}/privacy`,
+    schema: legalSchema("Privacy policy", "/privacy"),
+  },
+  {
+    path: "/terms",
+    out: "terms/index.html",
+    title: "Terms of service | FollowUpHub",
+    description:
+      "The terms that govern your FollowUpHub account: the free trial, fees and billing, acceptable use, consent obligations and data processing.",
+    canonical: `${SITE.url}/terms`,
+    schema: legalSchema("Terms of service", "/terms"),
+  },
+];
+
+export function renderHead(r: RouteMeta = ROUTES[0]): string {
   return [
-    `<title>${esc(TITLE)}</title>`,
-    `<meta name="description" content="${esc(DESCRIPTION)}" />`,
-    `<link rel="canonical" href="${SITE.url}" />`,
+    `<title>${esc(r.title)}</title>`,
+    `<meta name="description" content="${esc(r.description)}" />`,
+    `<link rel="canonical" href="${r.canonical}" />`,
     `<meta property="og:type" content="website" />`,
     `<meta property="og:locale" content="en_US" />`,
-    `<meta property="og:title" content="${esc(TITLE)}" />`,
-    `<meta property="og:description" content="${esc(DESCRIPTION)}" />`,
-    `<meta property="og:url" content="${SITE.url}" />`,
+    `<meta property="og:title" content="${esc(r.title)}" />`,
+    `<meta property="og:description" content="${esc(r.description)}" />`,
+    `<meta property="og:url" content="${r.canonical}" />`,
     `<meta property="og:image" content="${SITE.main}/images/og-image.jpg" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
-    `<script type="application/ld+json">${JSON.stringify(schema).replace(/</g, "\\u003c")}</script>`,
+    `<script type="application/ld+json">${r.schema}</script>`,
   ].join("\n    ");
 }
 
-export function render(): string {
-  return renderToString(<App />);
+export function render(path: RoutePath = "/"): string {
+  return renderToString(<App path={path} />);
 }

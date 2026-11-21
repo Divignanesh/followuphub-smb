@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PLAN, TRIAL_DAYS } from "../lib/content";
+import { CountdownText } from "./Countdown";
 import { EASE_OUT, PillCta } from "./ui";
 
 /**
@@ -44,7 +45,8 @@ export function TrialBar() {
         >
           <p className="min-w-0 flex-1 text-[14px] leading-snug">
             <span className="font-semibold">Founder’s plan: ${PLAN.founderPrice}/month</span>
-            <span className="hidden text-ink-soft sm:inline"> · {TRIAL_DAYS}-day free trial, cancel any time</span>
+            <span className="text-ink-soft"> · ends in <CountdownText className="font-semibold text-red" /></span>
+            <span className="hidden text-ink-soft md:inline"> · {TRIAL_DAYS}-day free trial</span>
           </p>
           <PillCta trial size="md">Start free trial</PillCta>
           <button type="button" onClick={close} aria-label="Close offer" className="grid size-11 shrink-0 place-items-center rounded-xl text-ink-soft hover:bg-soft">

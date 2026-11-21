@@ -260,7 +260,7 @@ export function TrialPopup() {
                     </span>
                   </label>
                   <p className="rounded-lg bg-soft px-3.5 py-2.5 text-[13px] text-ink-soft">
-                    {TRIAL_DAYS} days free. One-time setup fee of ${PLAN.setupFee}. Cancel any time.
+                    {TRIAL_DAYS} days free. Optional one-time setup of ${PLAN.setupFee}. Cancel any time.
                   </p>
 
                   <label className="flex items-start gap-2.5 text-[12.5px] text-ink-soft">

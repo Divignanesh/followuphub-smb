@@ -1,9 +1,9 @@
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Bell, CalendarCheck, CalendarClock, Check, CreditCard, FileText, MessageSquareText, PhoneCall, Star, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { AnimatedList } from "../components/AnimatedList";
 import { AppWindow, Avatar, Chip } from "../components/Mock";
-import { Reveal, cx } from "../components/ui";
+import { Reveal, cx, useCycle } from "../components/ui";
 
 /**
  * After the Nitux bento: one wide card holding the app's Dashboard, then two
@@ -49,8 +49,10 @@ function Dashboard() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.9, delay: 0.1 * i, ease: [0.16, 1, 0.3, 1] }}
                   style={{ width: s.w }}
-                  className="absolute inset-y-0 left-0 origin-left rounded-lg bg-[linear-gradient(90deg,var(--color-brand-tint),var(--color-mint-soft))]"
-                />
+                  className="absolute inset-y-0 left-0 origin-left"
+                >
+                  <span className="breathe absolute inset-0 rounded-lg bg-[linear-gradient(90deg,var(--color-brand-tint),var(--color-mint-soft))]" style={{ ["--dur" as string]: `${3.2 + i * 0.7}s`, animationDelay: `${1 + i * 0.3}s` }} />
+                </motion.span>
                 <span className="relative flex h-full items-center px-3 text-[12.5px] font-medium">{s.name}</span>
               </li>
             ))}
@@ -80,25 +82,43 @@ function Dashboard() {
 
 /** Reminder cards fanned like the reference's stack. */
 function Reminders() {
+  const { ref, i: at } = useCycle(3, 2400);
   const cards = [
     { who: "Priya Shah", text: "Your plumbing visit is tomorrow afternoon.", rot: -5, x: -18 },
     { who: "Marc Gagnon", text: "Reply YES to confirm your estimate visit.", rot: 3, x: 22 },
     { who: "Dana White", text: "Your tune-up is today. We’ll text on our way.", rot: -1.5, x: 0 },
   ];
   return (
-    <div className="relative mx-auto h-[270px] w-full max-w-[22rem]">
+    <div ref={ref} className="relative mx-auto h-[270px] w-full max-w-[22rem]">
       {cards.map((c, i) => (
         <div
           key={c.who}
-          style={{ top: `${12 + i * 84}px`, left: `calc(50% - 150px + ${c.x}px)`, transform: `rotate(${c.rot}deg)` }}
-          className="absolute w-[300px] rounded-xl bg-page p-3 text-ink shadow-float"
+          style={{ top: `${12 + i * 84}px`, left: `calc(50% - 150px + ${c.x}px)`, transform: `rotate(${c.rot}deg)`, zIndex: i === at ? 3 : 1 }}
+          className="absolute w-[300px]"
         >
-          <div className="flex items-center gap-2.5">
-            <Avatar name={c.who} i={i} size="size-7" />
-            <p className="text-[12.5px] font-semibold">Reminder</p>
-            {i === 2 && <span className="ml-auto grid size-5 place-items-center rounded-full bg-green text-white"><Check className="size-3" strokeWidth={3} /></span>}
-          </div>
-          <p className="mt-1.5 text-[12.5px] text-ink-soft">{c.text}</p>
+          <motion.div
+            animate={i === at ? { y: -6, scale: 1.04 } : { y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="float-slow rounded-xl bg-page p-3 text-ink shadow-float"
+            style={{ animationDelay: `${i * -2.3}s` }}
+          >
+            <div className="flex items-center gap-2.5">
+              <Avatar name={c.who} i={i} size="size-7" />
+              <p className="text-[12.5px] font-semibold">Reminder</p>
+              <span className="ml-auto flex items-center gap-1.5 text-[11px] text-ink-soft">
+                <AnimatePresence mode="wait" initial={false}>
+                  {i === at ? (
+                    <motion.span key="ok" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={{ type: "spring", stiffness: 500, damping: 20 }} className="flex items-center gap-1 font-medium text-green">
+                      Confirmed <span className="grid size-5 place-items-center rounded-full bg-green text-white"><Check className="size-3" strokeWidth={3} /></span>
+                    </motion.span>
+                  ) : (
+                    <motion.span key="sent" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>Sent</motion.span>
+                  )}
+                </AnimatePresence>
+              </span>
+            </div>
+            <p className="mt-1.5 text-[12.5px] text-ink-soft">{c.text}</p>
+          </motion.div>
         </div>
       ))}
     </div>
@@ -112,10 +132,19 @@ const HOURS = [
   { day: "Sunday", open: "Closed", off: true },
   { day: "Holidays", open: "Closed", off: true },
 ];
+const SLOTS: Record<string, string[]> = {
+  Weekdays: ["Tuesday at 9:00 AM", "Wednesday at 2:30 PM", "Thursday at 11:00 AM"],
+  Saturday: ["Saturday at 10:00 AM"],
+  Sunday: ["Sunday at 1:00 PM"],
+  Holidays: ["Monday (holiday) at 10:00 AM"],
+};
 function Availability() {
   const [on, setOn] = useState(HOURS.map((h) => !h.off));
+  const slots = HOURS.flatMap((h, i) => (on[i] ? SLOTS[h.day] : []));
+  const { ref, i: k } = useCycle(Math.max(slots.length, 1), 2200);
+  const slot = slots.length ? slots[k % slots.length] : "No open times";
   return (
-    <div className="mx-auto grid w-full max-w-[22rem] gap-2.5">
+    <div ref={ref} className="mx-auto grid w-full max-w-[22rem] gap-2.5">
       {HOURS.map((h, i) => (
         <div key={h.day} className="flex items-center gap-3 rounded-xl bg-page px-4 py-3 shadow-card">
           <button
@@ -132,6 +161,18 @@ function Availability() {
           <span className={cx("ml-auto rounded-md px-2 py-1 text-[12.5px]", on[i] ? "bg-brand-tint text-brand" : "text-ink-soft")}>{on[i] ? (h.off ? "Open" : h.open) : "Closed"}</span>
         </div>
       ))}
+      <div className="mt-1 flex items-center gap-2.5 rounded-xl bg-brand-tint px-4 py-3 text-[13px]" aria-hidden="true">
+        <span className="relative flex size-2 shrink-0">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-60" />
+          <span className="relative inline-flex size-2 rounded-full bg-brand" />
+        </span>
+        <span className="text-ink-soft">AI is offering</span>
+        <span className="relative h-5 flex-1 overflow-hidden font-semibold text-brand">
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span key={slot} className="absolute inset-0 truncate" initial={{ y: 18, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -18, opacity: 0 }} transition={{ duration: 0.35 }}>{slot}</motion.span>
+          </AnimatePresence>
+        </span>
+      </div>
     </div>
   );
 }

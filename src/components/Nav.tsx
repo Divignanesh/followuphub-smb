@@ -18,9 +18,12 @@ const links = [
  * layoutId). The current section comes from an IntersectionObserver, never
  * a scroll listener.
  */
-export function Nav() {
+export function Nav({ home = true }: { home?: boolean }) {
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState("top");
+  const [active, setActive] = useState(home ? "top" : "");
+  // Off the home page the sections live on "/", and there is no trial form to open.
+  const to = (id: string) => (home ? `#${id}` : id === "top" ? "/" : `/#${id}`);
+  const cta = home ? { trial: true } : { href: "/#pricing" };
   const [scrolled, setScrolled] = useState(false);
 
   // A hairline under the bar once the page has moved (sentinel, not a scroll listener).
@@ -51,7 +54,7 @@ export function Nav() {
     <header className={cx("sticky top-0 z-50 border-b bg-page/85 backdrop-blur-md transition-colors", scrolled ? "border-line" : "border-transparent")}>
       <div className="container-x">
         <nav aria-label="Primary" className="flex h-[76px] items-center justify-between gap-6">
-          <a href="#top" aria-label="FollowUpHub home" className="rounded-lg">
+          <a href={to("top")} aria-label="FollowUpHub home" className="rounded-lg">
             <Logo eager />
           </a>
 
@@ -62,7 +65,7 @@ export function Nav() {
                   <motion.span layoutId="nav-pill" transition={{ type: "spring", stiffness: 380, damping: 32 }} className="absolute inset-0 rounded-lg bg-page shadow-card" />
                 )}
                 <a
-                  href={`#${l.id}`}
+                  href={to(l.id)}
                   aria-current={active === l.id ? "location" : undefined}
                   className={cx("relative block rounded-lg px-4 py-2 text-[14.5px] transition-colors", active === l.id ? "text-ink" : "text-ink-soft hover:text-ink")}
                 >
@@ -81,7 +84,7 @@ export function Nav() {
             <a href={SITE.app} {...external(SITE.app)} className="rounded-xl px-4 py-2.5 text-[14.5px] font-medium text-ink ring-1 ring-inset ring-line-strong transition-colors hover:bg-soft">
               Log in
             </a>
-            <PillCta trial size="md">Start free trial</PillCta>
+            <PillCta {...cta} size="md">Start free trial</PillCta>
           </div>
 
           <button
@@ -109,7 +112,7 @@ export function Nav() {
               <ul>
                 {links.map((l) => (
                   <li key={l.id}>
-                    <a href={`#${l.id}`} onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-[16px] hover:bg-soft">
+                    <a href={to(l.id)} onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-[16px] hover:bg-soft">
                       {l.label}
                     </a>
                   </li>
@@ -122,7 +125,7 @@ export function Nav() {
               </ul>
               <div className="mt-3 grid grid-cols-2 gap-2 border-t border-line pt-3">
                 <PillCta href={SITE.app} tone="outline" size="md">Log in</PillCta>
-                <PillCta trial size="md">Start free trial</PillCta>
+                <PillCta {...cta} size="md">Start free trial</PillCta>
               </div>
             </motion.div>
           )}

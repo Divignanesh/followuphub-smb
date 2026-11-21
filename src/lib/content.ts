@@ -20,8 +20,8 @@ export const SITE = {
   url: "https://www.followuphub.ai/small-business",
   email: "support@followuphub.ai",
   app: "https://app.followuphub.ai",
-  privacy: "https://www.followuphub.ai/privacy",
-  terms: "https://www.followuphub.ai/terms",
+  privacy: "/privacy",
+  terms: "/terms",
   /**
    * Where the trial form sends people once they finish step 2. The form adds
    * name, email and phone as query parameters so checkout is prefilled.
@@ -33,6 +33,14 @@ export const SITE = {
   /** Optional: a webhook (e.g. a FollowUpHub inbound workflow) that receives each trial lead as JSON. */
   leadWebhook: "",
 } as const;
+
+/** The same social accounts the main site lists (SITE.social in its seo.ts). */
+export const SOCIAL = [
+  { label: "Facebook", href: "https://www.facebook.com/followuphub" },
+  { label: "Instagram", href: "https://www.instagram.com/followuphub" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/followuphub" },
+  { label: "YouTube", href: "https://www.youtube.com/@followuphub" },
+];
 
 export const TRIAL_DAYS = 14;
 
@@ -93,7 +101,7 @@ export const FAQS: Faq[] = [
   { q: "Who is FollowUpHub for?", a: "Owner-operated businesses that live on the phone: trades and home services, clinics, salons, auto shops, studios and local services." },
   { q: "How does the free trial work?", a: `You get ${TRIAL_DAYS} days with everything switched on. Cancel before it ends and you won’t be charged.` },
   { q: "What is the founder’s plan?", a: "Our launch price for early customers: the full product at 25% off the regular monthly price, for as long as you stay subscribed." },
-  { q: "What is the setup fee for?", a: "A one-time fee. Our team connects your phone number, registers your business for texting, imports your contacts and sets up your AI agent with you." },
+  { q: "Do I have to pay the setup fee?", a: "No, it’s optional. For a one-time fee our team connects your phone number, registers your business for texting, imports your contacts and sets up your AI agent with you. You can also set everything up yourself for free." },
   { q: "Is there a contract?", a: "No. You pay month to month and can cancel from your billing settings." },
   { q: "I’m not a tech person. Can I set this up?", a: "Yes. Our team sets everything up with you and walks you through it." },
   { q: "Can I bring my customer list?", a: "Yes. We move your contacts over for you during onboarding." },
@@ -158,4 +166,27 @@ export const TESTIMONIALS: Testimonial[] = [
   { name: "Hassan Ali", role: "Locksmith", quote: "Late-night calls get answered. That’s real money." },
   { name: "Megan Price", role: "Lash studio", quote: "My Instagram DMs turn into bookings now." },
   { name: "Paul Dubois", role: "Carpentry", quote: "Quote sent, quote accepted, invoice paid. All in one app." },
+];
+
+/**
+ * The bottom-left activity pop-ups. SAMPLE DATA: these are illustrative,
+ * not real customers. Before launch, feed this from real sign-ups (or a
+ * webhook/endpoint) — showing invented purchases as real ones can breach
+ * consumer-protection rules (FTC Act s.5, EU UCPD).
+ */
+export const ACTIVITY_ARE_SAMPLES = true;
+export type Activity = { name: string; place: string; kind: "bought" | "founder"; ago: string };
+export const ACTIVITY: Activity[] = [
+  { name: "Manish", place: "Scarborough, Toronto", kind: "founder", ago: "5 min ago" },
+  { name: "Sanjay", place: "North York, Toronto", kind: "bought", ago: "10 min ago" },
+  { name: "Rachel", place: "Etobicoke, Toronto", kind: "founder", ago: "14 min ago" },
+  { name: "Daniel", place: "Downtown Toronto", kind: "bought", ago: "19 min ago" },
+  { name: "Aisha", place: "East York, Toronto", kind: "founder", ago: "23 min ago" },
+  { name: "Tom", place: "The Danforth, Toronto", kind: "bought", ago: "28 min ago" },
+  { name: "Priya", place: "Liberty Village, Toronto", kind: "founder", ago: "33 min ago" },
+  { name: "Kevin", place: "Leslieville, Toronto", kind: "bought", ago: "39 min ago" },
+  { name: "Harpreet", place: "York, Toronto", kind: "founder", ago: "44 min ago" },
+  { name: "Marcus", place: "The Annex, Toronto", kind: "bought", ago: "49 min ago" },
+  { name: "Elena", place: "Midtown Toronto", kind: "founder", ago: "54 min ago" },
+  { name: "Jamal", place: "Junction, Toronto", kind: "bought", ago: "1 hr ago" },
 ];

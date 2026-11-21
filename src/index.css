@@ -178,11 +178,20 @@
 
   /* Gentle bob for floating elements. */
   .float-slow { animation: fuh-float 7s ease-in-out infinite; }
+  /* Slow push-in on photos, so still images feel alive. */
+  .kenburns { animation: fuh-kenburns 18s ease-in-out infinite alternate; transform-origin: 70% 40%; }
+  @keyframes fuh-kenburns { from { transform: scale(1); } to { transform: scale(1.09); } }
+  /* Bars that keep breathing after they fill. */
+  .breathe { animation: fuh-breathe var(--dur, 4s) ease-in-out infinite; transform-origin: left; }
+  @keyframes fuh-breathe { 50% { transform: scaleX(0.93); } }
+  /* Rings that ripple out from a node. */
+  .ripple { animation: fuh-ripple 2.8s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+  @keyframes fuh-ripple { from { transform: scale(1); opacity: 0.55; } to { transform: scale(1.9); opacity: 0; } }
   @keyframes fuh-float { 50% { transform: translateY(-8px); } }
 
   @media (prefers-reduced-motion: reduce) {
     .border-beam { display: none; }
-    .float-slow { animation: none; }
+    .float-slow, .kenburns, .breathe, .ripple { animation: none; }
     .shine { display: none; }
     .shimmer-slide, .spin-around { animation: none; }
     .marquee { animation: none; }

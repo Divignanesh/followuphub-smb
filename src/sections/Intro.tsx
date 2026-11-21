@@ -58,6 +58,7 @@ export function WorksWith() {
           </ul>
 
           <Node nodeRef={hub} className="size-20 sm:size-24">
+            {[0, 1].map((k) => <span key={k} aria-hidden="true" className="ripple absolute inset-0 rounded-full border-2 border-brand/40" style={{ animationDelay: `${k * 1.4}s` }} />)}
             <img src="/images/brand/mark-brand.svg" alt="FollowUpHub" className="size-10 sm:size-12" />
           </Node>
 
@@ -205,7 +206,7 @@ export function Trades() {
             const Icon = ICONS[t.id] ?? Wrench;
             return (
               <article key={t.id} aria-label={t.label} className="relative h-[660px] w-[86vw] max-w-[60rem] shrink-0 snap-start overflow-hidden rounded-[1.75rem] bg-ink shadow-card sm:h-[540px] sm:w-[80vw]">
-                <img src={`/images/trades/${t.id}.jpg`} alt="" loading={i < 2 ? "eager" : "lazy"} decoding="async" className="absolute inset-0 size-full object-cover" />
+                <img src={`/images/trades/${t.id}.jpg`} alt="" loading={i < 2 ? "eager" : "lazy"} decoding="async" className="kenburns absolute inset-0 size-full object-cover" style={{ animationDelay: `${-i * 3}s` }} />
                 <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgb(18_32_27/0.75)_0%,rgb(18_32_27/0.15)_45%,rgb(18_32_27/0.55)_100%)] sm:bg-[linear-gradient(90deg,rgb(18_32_27/0.82)_0%,rgb(18_32_27/0.35)_50%,rgb(18_32_27/0.1)_100%)]" />
                 <div className="relative flex h-full flex-col justify-between gap-6 p-6 sm:flex-row sm:items-center sm:p-10">
                   <div className="max-w-xs text-white">

@@ -22,10 +22,19 @@ type Stage = { id: string; tab: string; icon: LucideIcon; title: string; body: s
 
 /** Rows arrive one after another, so each tab has a short animation to finish. */
 function Mini({ children }: { children: ReactNode }) {
+  const n = Children.count(children);
+  const [lit, setLit] = useState(-1);
+  useEffect(() => {
+    let k = 0;
+    let t = setTimeout(function step() { setLit(k++ % n); t = setTimeout(step, 1100); }, 0.45 * n * 1000 + 600);
+    return () => clearTimeout(t);
+  }, [n]);
   return (
     <motion.div className="grid gap-2.5" initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.45, delayChildren: 0.2 } } }}>
-      {Children.map(children, (c) => (
-        <motion.div className="grid" variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 26 } } }}>{c}</motion.div>
+      {Children.map(children, (c, i) => (
+        <motion.div className="grid" variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 26 } } }}>
+          <motion.div className="grid" animate={lit === i ? { scale: 1.025, x: 4 } : { scale: 1, x: 0 }} transition={{ type: "spring", stiffness: 320, damping: 22 }}>{c}</motion.div>
+        </motion.div>
       ))}
     </motion.div>
   );

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { Check, Flame, Wrench, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { Countdown } from "../components/Countdown";
 import { NumberTicker } from "../components/magic/number-ticker";
 import { TrialButton } from "../components/TrialButton";
 import { EASE_OUT, PillCta, Reveal, cx } from "../components/ui";
@@ -24,12 +25,16 @@ const MATRIX: { feature: string; has: (typeof TOOLS)[number][] }[] = [
   { feature: "Email campaigns", has: ["FollowUpHub", "HubSpot", "Mailchimp"] },
 ];
 
-function Mark({ yes, brand }: { yes: boolean; brand?: boolean }) {
+function Mark({ yes, brand, d = 0 }: { yes: boolean; brand?: boolean; d?: number }) {
   return yes ? (
-    <span className={cx("mx-auto grid size-7 place-items-center rounded-full", brand ? "bg-brand text-white" : "bg-green-tint text-green")}>
+    <motion.span
+      initial={{ scale: 0, rotate: -30 }} whileInView={{ scale: 1, rotate: 0 }} viewport={{ once: true, margin: "-10% 0px" }}
+      transition={{ type: "spring", stiffness: 420, damping: 18, delay: d }}
+      className={cx("mx-auto grid size-7 place-items-center rounded-full", brand ? "bg-brand text-white" : "bg-green-tint text-green")}
+    >
       <Check aria-hidden="true" className="size-4" strokeWidth={3} />
       <span className="sr-only">Yes</span>
-    </span>
+    </motion.span>
   ) : (
     <span className="mx-auto grid size-7 place-items-center rounded-full bg-soft-2 text-ink-soft/70">
       <X aria-hidden="true" className="size-3.5" strokeWidth={2.5} />
@@ -60,12 +65,12 @@ export function Included() {
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
-              {MATRIX.map((r) => (
+              {MATRIX.map((r, ri) => (
                 <tr key={r.feature}>
                   <th scope="row" className="sticky left-0 z-10 bg-page px-5 py-4 text-left text-[14.5px] font-medium sm:px-7">{r.feature}</th>
                   {TOOLS.map((t, i) => (
                     <td key={t} className={cx("px-3 py-4", i === 0 && "bg-brand-tint")}>
-                      <Mark yes={r.has.includes(t)} brand={i === 0} />
+                      <Mark yes={r.has.includes(t)} brand={i === 0} d={ri * 0.07 + i * 0.05} />
                     </td>
                   ))}
                 </tr>
@@ -95,7 +100,7 @@ function FounderToggle({ on, onChange }: { on: boolean; onChange: (v: boolean) =
     )}>
       <span aria-hidden="true" className="border-beam" />
       {/* A light sweep across the box while unclaimed, to draw the eye. */}
-      {!on && <span aria-hidden="true" className="shine pointer-events-none absolute inset-0" />}
+      {!on && <span aria-hidden="true" className="shine pointer-events-none absolute inset-0 opacity-15" />}
       <input type="checkbox" checked={on} onChange={(e) => onChange(e.target.checked)} className="peer sr-only" />
       <span aria-hidden="true" className={cx("mt-0.5 grid size-6 shrink-0 place-items-center rounded-md border-2 transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand", on ? "border-brand bg-brand text-white" : "border-brand/60 bg-page")}>
         <AnimatePresence>
@@ -181,6 +186,17 @@ export function Pricing() {
 
         <Reveal className="mx-auto mt-10 max-w-4xl">
           <div ref={ref} className="relative grid overflow-hidden rounded-[1.75rem] bg-page shadow-float md:grid-cols-[1fr_1fr]">
+            <div className="relative flex flex-col items-center justify-between gap-3 overflow-hidden bg-brand-deep px-5 py-4 text-white sm:flex-row sm:px-7 md:col-span-2">
+              <span aria-hidden="true" className="shine pointer-events-none absolute inset-0 opacity-15" />
+              <p className="relative flex items-center gap-2.5 text-center text-[14.5px] font-semibold sm:text-left">
+                <span className="relative flex size-2.5 shrink-0">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-gold opacity-75" />
+                  <span className="relative inline-flex size-2.5 rounded-full bg-gold" />
+                </span>
+                Founder’s price ends in
+              </p>
+              <Countdown tone="dark" className="relative" />
+            </div>
             <div className="flex flex-col px-5 pt-6 sm:px-7">
               <h3 className="text-[18px] font-semibold">{PLAN.name}</h3>
               <p className="text-[14px] text-ink-soft">Your AI front desk, all modules included</p>
@@ -221,8 +237,11 @@ export function Pricing() {
               <div className="-mx-5 mt-6 flex items-start gap-3 border-t border-line bg-soft px-5 py-4 sm:-mx-7 sm:px-7">
                 <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-page text-brand ring-1 ring-inset ring-line"><Wrench aria-hidden="true" className="size-4" /></span>
                 <p className="text-[13.5px] leading-snug">
-                  <span className="font-semibold">One-time setup fee: ${PLAN.setupFee}</span>
-                  <span className="block text-ink-soft">We connect your number, register you for business texting, import your contacts and set up your AI agent with you.</span>
+                  <span className="flex flex-wrap items-center gap-2 font-semibold">
+                    Done-for-you setup: ${PLAN.setupFee} one time
+                    <span className="rounded-md bg-page px-1.5 py-0.5 text-[11.5px] font-semibold text-brand ring-1 ring-inset ring-line">Optional</span>
+                  </span>
+                  <span className="block text-ink-soft">We set everything up for you, so you start hands-free from day one.</span>
                 </p>
               </div>
             </div>

@@ -1,7 +1,7 @@
-import { ArrowRight, CreditCard, Plus, Target } from "lucide-react";
+import { ArrowRight, CreditCard, Mail, Plus, Target } from "lucide-react";
 import { Avatar } from "../components/Mock";
 import { Logo, PillCta, Reveal, external } from "../components/ui";
-import { FAQS, SITE, TRIAL_DAYS } from "../lib/content";
+import { FAQS, SITE, SOCIAL, TRIAL_DAYS } from "../lib/content";
 
 /** Native <details>, so the answers work and are indexable without JS. */
 export function FAQ() {
@@ -15,6 +15,7 @@ export function FAQ() {
             <a href={`mailto:${SITE.email}`} className="font-medium text-brand underline-offset-4 hover:underline">{SITE.email}</a>
           </p>
         </Reveal>
+        <div>
         <div className="divide-y divide-line overflow-hidden rounded-[1.25rem] bg-page shadow-card">
           {FAQS.map((f) => (
             <details key={f.q} className="group px-6 transition-colors open:bg-soft">
@@ -25,6 +26,7 @@ export function FAQ() {
               <p className="t-body max-w-[62ch] pb-5 text-ink-soft">{f.a}</p>
             </details>
           ))}
+        </div>
         </div>
       </div>
     </section>
@@ -89,38 +91,107 @@ export function FinalCTA() {
   );
 }
 
-/** Flowa's footer: logo, a line about the product and three link columns. */
+const footerCols = [
+  {
+    h: "Product",
+    links: [
+      { label: "Who it’s for", href: "/#trades" },
+      { label: "Features", href: "/#features" },
+      { label: "What’s included", href: "/#included" },
+      { label: "Pricing", href: "/#pricing" },
+    ],
+  },
+  {
+    h: "Company",
+    links: [
+      { label: "For Real Estate", href: SITE.realEstate },
+      { label: "Questions", href: "/#faq" },
+      { label: "Log in", href: SITE.app },
+      { label: "Support", href: `mailto:${SITE.email}` },
+    ],
+  },
+  {
+    h: "Legal",
+    links: [
+      { label: "Privacy policy", href: SITE.privacy },
+      { label: "Terms of service", href: SITE.terms },
+    ],
+  },
+];
+
+/** Same structure as the real estate site's footer, over the green wordmark. */
 export function Footer() {
-  const cols = [
-    { h: "Product", links: [["Who it’s for", "#trades"], ["Features", "#features"], ["What’s included", "#included"], ["Pricing", "#pricing"]] },
-    { h: "Company", links: [["For Real Estate", SITE.realEstate], ["Contact", `mailto:${SITE.email}`]] },
-    { h: "Legal", links: [["Privacy", SITE.privacy], ["Terms", SITE.terms], ["Log in", SITE.app]] },
-  ];
   return (
     <footer id="site-footer" className="relative overflow-hidden border-t border-line bg-soft">
       <div className="container-x relative pb-10 pt-16">
-        <div className="grid gap-12 border-b border-line pb-12 md:grid-cols-[1.2fr_2fr]">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <Logo />
-            <p className="t-body mt-4 max-w-xs text-ink-soft">The AI front desk for small businesses: answers, bookings, reminders and payments in one app.</p>
+            <p className="mt-4 max-w-xs text-[14px] leading-[1.7] text-ink-soft">
+              The AI front desk for small businesses: answers, bookings, reminders and payments in one app.
+            </p>
+            <a
+              href={`mailto:${SITE.email}`}
+              className="mt-5 inline-flex items-center gap-2 text-[14px] font-semibold text-ink transition-colors hover:text-brand"
+            >
+              <Mail className="size-4 text-brand" aria-hidden="true" />
+              {SITE.email}
+            </a>
           </div>
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-            {cols.map((c) => (
-              <div key={c.h}>
-                <h2 className="text-[15px] font-semibold">{c.h}</h2>
-                <ul className="mt-4 grid gap-3">
-                  {c.links.map(([label, href]) => (
-                    <li key={label}>
-                      <a href={href} {...external(href)} className="text-[14.5px] text-ink-soft hover:text-brand">{label}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+
+          {footerCols.map((c) => (
+            <nav key={c.h} aria-label={c.h}>
+              <h2 className="text-[12px] font-bold uppercase tracking-[0.14em] text-ink">{c.h}</h2>
+              <ul className="mt-4 space-y-2.5">
+                {c.links.map((l) => (
+                  <li key={l.label}>
+                    <a
+                      href={l.href}
+                      {...external(l.href)}
+                      className="-my-1 inline-block py-1.5 text-[14px] text-ink-soft transition-colors hover:text-brand"
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
-        <p className="t-meta mt-6 text-ink-soft">© {new Date().getFullYear()} FollowUpHub.</p>
+
+        <div className="mt-12 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[13px] text-ink-soft">
+            © {new Date().getFullYear()} {SITE.name}. All rights reserved.
+          </p>
+          <ul className="flex flex-wrap gap-x-4 gap-y-2">
+            {SOCIAL.map((s) => (
+              <li key={s.href}>
+                <a
+                  href={s.href}
+                  {...external(s.href)}
+                  className="-my-1 inline-block py-1.5 text-[13px] font-semibold text-ink-soft transition-colors hover:text-brand"
+                >
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
+      {/* Inline styles, because a Tailwind background shorthand would reset
+          the text clip and paint a solid block. */}
+      <p
+        aria-hidden="true"
+        className="pointer-events-none -mb-[0.18em] select-none whitespace-nowrap text-center text-[16.5vw] font-semibold leading-none tracking-[-0.06em]"
+        style={{
+          backgroundImage: "linear-gradient(180deg, rgb(26 107 90 / 0.30), rgb(26 107 90 / 0.08))",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+          color: "transparent",
+        }}
+      >
+        FollowUpHub
+      </p>
     </footer>
   );
 }
