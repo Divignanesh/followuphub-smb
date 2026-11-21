@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import {
   CalendarCheck, Check, CreditCard, FileText, Funnel, MessagesSquare, Receipt, Star, type LucideIcon,
 } from "lucide-react";
@@ -30,7 +30,7 @@ function Mini({ children }: { children: ReactNode }) {
     return () => clearTimeout(t);
   }, [n]);
   return (
-    <motion.div className="grid gap-2.5" initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.45, delayChildren: 0.2 } } }}>
+    <motion.div className="grid gap-2.5" initial="hidden" whileInView="show" viewport={{ once: true, margin: "-10% 0px" }} variants={{ show: { transition: { staggerChildren: 0.45, delayChildren: 0.2 } } }}>
       {Children.map(children, (c, i) => (
         <motion.div className="grid" variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 26 } } }}>
           <motion.div className="grid" animate={lit === i ? { scale: 1.025, x: 4 } : { scale: 1, x: 0 }} transition={{ type: "spring", stiffness: 320, damping: 22 }}>{c}</motion.div>
@@ -131,6 +131,52 @@ const STAGES: Stage[] = [
   },
 ];
 
+/**
+ * Phones: the five stages as same-height cards. Each sticks a little lower
+ * than the one before, and the ones underneath shrink back as the stack
+ * grows, so it always reads as a deck, scrolling down or up.
+ */
+function PhoneCard({ st, i, n, progress }: { st: Stage; i: number; n: number; progress: MotionValue<number> }) {
+  const reduce = useReducedMotion();
+  const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.04]);
+  const shade = useTransform(progress, [i / n, 1], [0, (n - 1 - i) * 0.05]);
+  return (
+    <div className="sticky" style={{ top: `${86 + i * 12}px` }}>
+      <motion.article
+        aria-labelledby={`aio-m-${st.id}`}
+        style={reduce ? undefined : { scale, transformOrigin: "top center" }}
+        className="relative flex h-[34rem] flex-col overflow-hidden rounded-[1.5rem] bg-soft p-5 shadow-float"
+      >
+        <div className="flex items-center gap-3">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand text-white"><st.icon className="size-5" aria-hidden="true" /></span>
+          <span className="text-[12px] font-semibold uppercase tracking-[0.08em] text-brand">{String(i + 1).padStart(2, "0")} · {st.tab}</span>
+        </div>
+        <h3 id={`aio-m-${st.id}`} className="mt-4 text-[1.4rem] font-semibold leading-tight tracking-[-0.025em]">{st.title}</h3>
+        <ul className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5">
+          {st.items.slice(0, 6).map((it) => (
+            <li key={it} className="flex items-start gap-1.5 text-[13px] leading-snug">
+              <Check aria-hidden="true" className="mt-0.5 size-3.5 shrink-0 text-brand" strokeWidth={2.75} />
+              {it}
+            </li>
+          ))}
+        </ul>
+        <div aria-hidden="true" className="-mx-2 mt-5 min-h-0 flex-1 overflow-hidden px-2 pt-1 [mask-image:linear-gradient(to_bottom,black_80%,transparent)]">{st.visual}</div>
+        {!reduce && <motion.span aria-hidden="true" style={{ opacity: shade }} className="pointer-events-none absolute inset-0 bg-ink" />}
+      </motion.article>
+    </div>
+  );
+}
+
+function PhoneStack() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  return (
+    <div ref={ref} className="mt-8 grid gap-5 md:hidden">
+      {STAGES.map((st, i) => <PhoneCard key={st.id} st={st} i={i} n={STAGES.length} progress={scrollYProgress} />)}
+    </div>
+  );
+}
+
 export function AllInOne() {
   const [at, setAt] = useState(0);
   const [auto, setAuto] = useState(true);
@@ -153,7 +199,7 @@ export function AllInOne() {
         <p className="t-lede mx-auto mt-4 max-w-xl text-ink-soft">From the first call to the five-star review, every step runs from the same place.</p>
       </Reveal>
 
-      <div className="no-scrollbar mt-8 flex overflow-x-auto px-1 py-1 sm:justify-center">
+      <div className="no-scrollbar mt-8 hidden overflow-x-auto px-1 py-1 sm:justify-center md:flex">
         <AnimatedTabs
           label="What it does"
           idPrefix="aio"
@@ -163,7 +209,7 @@ export function AllInOne() {
         />
       </div>
 
-      <div ref={box} className="relative mt-6 overflow-hidden rounded-[1.75rem] bg-soft ring-1 ring-inset ring-line">
+      <div ref={box} className="relative mt-6 hidden overflow-hidden rounded-[1.75rem] bg-soft ring-1 ring-inset ring-line md:block">
         {playing && (
           <motion.span
             key={at}
@@ -202,6 +248,9 @@ export function AllInOne() {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* Phones: each stage is a card that sticks and stacks on the last. */}
+      <PhoneStack />
     </section>
   );
 }

@@ -1,15 +1,16 @@
 import { ArrowRight, CreditCard, Mail, Plus, Target } from "lucide-react";
 import { Avatar } from "../components/Mock";
 import { Logo, PillCta, Reveal, external } from "../components/ui";
-import { FAQS, SITE, SOCIAL, TRIAL_DAYS } from "../lib/content";
+import { COMPARE_SLUGS, COMPETITORS, comparePath } from "../lib/competitors";
+import { FAQS, SITE, SOCIAL, TRIAL_DAYS, type Faq } from "../lib/content";
 
 /** Native <details>, so the answers work and are indexable without JS. */
-export function FAQ() {
+export function FAQ({ faqs = FAQS, heading = "Questions, answered" }: { faqs?: readonly Faq[]; heading?: string }) {
   return (
     <section id="faq" aria-labelledby="faq-title" className="container-x section-y">
       <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <Reveal>
-          <h2 id="faq-title" className="t-h2">Questions, answered</h2>
+          <h2 id="faq-title" className="t-h2">{heading}</h2>
           <p className="t-lede mt-4 text-ink-soft">
             Something else?{" "}
             <a href={`mailto:${SITE.email}`} className="font-medium text-brand underline-offset-4 hover:underline">{SITE.email}</a>
@@ -17,7 +18,7 @@ export function FAQ() {
         </Reveal>
         <div>
         <div className="divide-y divide-line overflow-hidden rounded-[1.25rem] bg-page shadow-card">
-          {FAQS.map((f) => (
+          {faqs.map((f) => (
             <details key={f.q} className="group px-6 transition-colors open:bg-soft">
               <summary className="flex min-h-16 list-none items-center justify-between gap-4 py-5 text-[16px] font-medium [&::-webkit-details-marker]:hidden">
                 {f.q}
@@ -41,7 +42,8 @@ export function FAQ() {
  */
 const PHOTO = "";
 
-export function FinalCTA() {
+/** On the home page the button opens the trial form; elsewhere pass `href`. */
+export function FinalCTA({ href }: { href?: string } = {}) {
   return (
     <section aria-labelledby="final-title" className="container-x pb-16 sm:pb-20">
       <Reveal>
@@ -53,7 +55,7 @@ export function FinalCTA() {
               FollowUpHub answers, books, reminds and gets you paid. Fewer missed calls, less chasing, more jobs on the calendar.
             </p>
             <div className="mt-9">
-              <PillCta trial tone="light">Start free trial <ArrowRight aria-hidden="true" className="ml-2 size-4" /></PillCta>
+              <PillCta trial={!href} href={href} tone="light">Start free trial <ArrowRight aria-hidden="true" className="ml-2 size-4" /></PillCta>
               <p className="mt-3 text-[13px] text-white/65">{TRIAL_DAYS} days free. No contract.</p>
             </div>
           </div>
@@ -93,19 +95,33 @@ export function FinalCTA() {
 
 const footerCols = [
   {
-    h: "Product",
+    h: "Platform",
     links: [
-      { label: "Who it’s for", href: "/#trades" },
-      { label: "Features", href: "/#features" },
-      { label: "What’s included", href: "/#included" },
+      { label: "Missed-call text-back", href: "/#features" },
+      { label: "AI calling and texting", href: "/#features" },
+      { label: "Booking and reminders", href: "/#all-in-one" },
+      { label: "Invoices and payments", href: "/#all-in-one" },
       { label: "Pricing", href: "/#pricing" },
     ],
   },
   {
+    h: "Compare",
+    links: [
+      { label: "Best CRM for small business", href: "/best-crm-for-small-business" },
+      { label: "vs. other tools", href: "/#included" },
+      { label: "What’s included", href: "/#all-in-one" },
+      { label: "Setup and onboarding", href: "/#faq" },
+    ],
+  },
+  {
+    h: "vs FollowUpHub",
+    links: COMPARE_SLUGS.map((s) => ({ label: COMPETITORS[s].name, href: comparePath(s) })),
+  },
+  {
     h: "Company",
     links: [
-      { label: "For Real Estate", href: SITE.realEstate },
       { label: "Questions", href: "/#faq" },
+      { label: "For Real Estate", href: SITE.realEstate },
       { label: "Log in", href: SITE.app },
       { label: "Support", href: `mailto:${SITE.email}` },
     ],
@@ -124,11 +140,11 @@ export function Footer() {
   return (
     <footer id="site-footer" className="relative overflow-hidden border-t border-line bg-soft">
       <div className="container-x relative pb-10 pt-16">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
-          <div>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-[1.4fr_repeat(5,1fr)]">
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <Logo />
             <p className="mt-4 max-w-xs text-[14px] leading-[1.7] text-ink-soft">
-              The AI front desk for small businesses: answers, bookings, reminders and payments in one app.
+              The AI front desk for small businesses.
             </p>
             <a
               href={`mailto:${SITE.email}`}

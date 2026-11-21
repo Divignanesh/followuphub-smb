@@ -17,5 +17,23 @@ for (const route of ROUTES) {
   const outPath = resolve(dist, route.out);
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, html, "utf8");
-  console.log(`  prerendered  ${route.path.padEnd(9)} -> dist/${route.out}  (${Math.round(html.length / 1024)} kB)`);
+  console.log(`  prerendered  ${route.path.padEnd(40)} -> dist/${route.out}  (${Math.round(html.length / 1024)} kB)`);
 }
+
+// sitemap.xml, generated from the same route table so it can never list a
+// page that was not built.
+const today = new Date().toISOString().slice(0, 10);
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${ROUTES.map(
+  (r) => `  <url>
+    <loc>${r.canonical}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${r.changefreq}</changefreq>
+    <priority>${r.priority}</priority>
+  </url>`,
+).join("\n")}
+</urlset>
+`;
+writeFileSync(resolve(dist, "sitemap.xml"), sitemap, "utf8");
+console.log(`  wrote        sitemap.xml (${ROUTES.length} URLs)`);

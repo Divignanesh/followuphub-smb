@@ -108,35 +108,35 @@ function PhoneChat({ t, play, onDone }: { t: Trade; play: boolean; onDone: () =>
     return () => clearTimeout(t1);
   }, [play, step, reduce]);
 
-  const bubble = { initial: { opacity: 0, y: 8, scale: 0.96 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { type: "spring" as const, stiffness: 380, damping: 30 } };
+  const bubble = { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, transition: { type: "spring" as const, stiffness: 380, damping: 30 } };
   return (
-    <div className="relative h-[390px] w-[190px] rounded-[2.4rem] bg-ink p-[7px] shadow-[0_30px_60px_-20px_rgb(18_32_27/0.55)] ring-1 ring-white/10 sm:h-[451px] sm:w-[220px]">
-      <div className="flex h-full flex-col overflow-hidden rounded-[2rem] bg-page">
-        <div className="flex items-center gap-2 border-b border-line px-3 pb-2.5 pt-6">
-          <span className="grid size-7 place-items-center rounded-full bg-brand-tint text-[10px] font-semibold text-brand">{t.business.split(" ").map((w) => w[0]).join("").slice(0, 2)}</span>
-          <span className="min-w-0">
-            <span className="block truncate text-[12px] font-semibold">{t.business}</span>
-            <span className="block text-[10px] text-green">AI front desk, online</span>
+    <div className="relative h-[456px] w-[210px] rounded-[2.6rem] bg-ink p-[7px] [-webkit-font-smoothing:antialiased] shadow-[0_30px_60px_-20px_rgb(18_32_27/0.55)] ring-1 ring-white/10 sm:h-[543px] sm:w-[250px]">
+      <div className="flex h-full flex-col overflow-hidden rounded-[2.2rem] bg-page">
+        <div className="flex flex-col items-center gap-1 border-b border-line bg-page/95 px-3 pb-2 pt-9">
+          <span className="grid size-8 place-items-center rounded-full bg-brand-tint text-[10.5px] font-semibold text-brand">{t.business.split(" ").map((w) => w[0]).join("").slice(0, 2)}</span>
+          <span className="min-w-0 text-center">
+            <span className="block truncate text-[11px] font-semibold">{t.business}</span>
+            <span className="block text-[9.5px] text-green">AI front desk, online</span>
           </span>
         </div>
-        <div className="flex flex-1 flex-col justify-end gap-2 bg-soft p-3">
+        <div className="flex flex-1 flex-col justify-end gap-1.5 bg-page px-2.5 pb-4 pt-3">
           <AnimatePresence initial={false}>
-            {step >= 1 && <motion.p key="ask" {...bubble} className="max-w-[88%] rounded-2xl rounded-bl-md bg-page px-3 py-2 text-[12px] leading-snug shadow-card">{t.ask}</motion.p>}
+            {step >= 1 && <motion.p key="ask" {...bubble} className="max-w-[78%] rounded-[1.1rem] rounded-bl-[0.35rem] bg-[#e9ecea] px-2.5 py-1.5 text-[11px] leading-[1.35] text-ink sm:text-[11.5px]">{t.ask}</motion.p>}
             {step === 2 && (
-              <motion.span key="typing" {...bubble} exit={{ opacity: 0 }} className="flex gap-1 self-end rounded-2xl rounded-br-md bg-brand px-3 py-2.5">
+              <motion.span key="typing" {...bubble} exit={{ opacity: 0 }} className="flex gap-1 self-end rounded-[1.1rem] rounded-br-[0.35rem] bg-brand px-3 py-2.5">
                 {[0, 1, 2].map((k) => <motion.span key={k} className="size-1.5 rounded-full bg-white/80" animate={{ y: [0, -3, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: k * 0.12 }} />)}
               </motion.span>
             )}
-            {step >= 3 && <motion.p key="reply" {...bubble} className="max-w-[88%] self-end rounded-2xl rounded-br-md bg-brand px-3 py-2 text-[12px] leading-snug text-white">{t.reply}</motion.p>}
+            {step >= 3 && <motion.p key="reply" {...bubble} className="max-w-[78%] self-end rounded-[1.1rem] rounded-br-[0.35rem] bg-brand px-2.5 py-1.5 text-[11px] leading-[1.35] text-white sm:text-[11.5px]">{t.reply}</motion.p>}
             {step >= 4 && (
-              <motion.p key="done" {...bubble} className="flex items-center gap-1 self-center rounded-full bg-green-tint px-2.5 py-1 text-[11px] font-medium text-green">
+              <motion.p key="done" {...bubble} className="flex items-center gap-1 mt-1 self-center rounded-full bg-green-tint px-2.5 py-1 text-[10px] font-medium text-green">
                 <CalendarCheck className="size-3" /> Booked
               </motion.p>
             )}
           </AnimatePresence>
         </div>
       </div>
-      <span className="absolute left-1/2 top-3 h-[18px] w-[64px] -translate-x-1/2 rounded-full bg-ink" />
+      <span className="absolute left-1/2 top-[15px] h-[20px] w-[70px] -translate-x-1/2 rounded-full bg-ink sm:w-[80px]" />
     </div>
   );
 }
@@ -205,7 +205,7 @@ export function Trades() {
           {TRADES.map((t, i) => {
             const Icon = ICONS[t.id] ?? Wrench;
             return (
-              <article key={t.id} aria-label={t.label} className="relative h-[660px] w-[86vw] max-w-[60rem] shrink-0 snap-start overflow-hidden rounded-[1.75rem] bg-ink shadow-card sm:h-[540px] sm:w-[80vw]">
+              <article key={t.id} aria-label={t.label} className="relative h-[680px] w-[86vw] max-w-[60rem] shrink-0 snap-start overflow-hidden rounded-[1.75rem] bg-ink shadow-card sm:h-[620px] sm:w-[80vw]">
                 <img src={`/images/trades/${t.id}.jpg`} alt="" loading={i < 2 ? "eager" : "lazy"} decoding="async" className="kenburns absolute inset-0 size-full object-cover" style={{ animationDelay: `${-i * 3}s` }} />
                 <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgb(18_32_27/0.75)_0%,rgb(18_32_27/0.15)_45%,rgb(18_32_27/0.55)_100%)] sm:bg-[linear-gradient(90deg,rgb(18_32_27/0.82)_0%,rgb(18_32_27/0.35)_50%,rgb(18_32_27/0.1)_100%)]" />
                 <div className="relative flex h-full flex-col justify-between gap-6 p-6 sm:flex-row sm:items-center sm:p-10">
