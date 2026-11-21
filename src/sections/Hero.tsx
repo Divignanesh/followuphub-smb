@@ -39,6 +39,17 @@ function Float({ className, delay, children }: { className: string; delay: numbe
   );
 }
 
+/** A card shrunk for phones: scale and tilt outside, entrance in the middle, bob inside. */
+function MiniFloat({ className, origin, rot, delay, children }: { className: string; origin: string; rot: number; delay: number; children: ReactNode }) {
+  return (
+    <div className={cx("absolute", className)} style={{ transform: `scale(0.64) rotate(${rot}deg)`, transformOrigin: origin }}>
+      <motion.div initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.7, ease: EASE_OUT, delay }}>
+        <div className="breathe-card rounded-2xl bg-page p-4 shadow-float" style={{ animationDelay: `${-delay * 3}s` }}>{children}</div>
+      </motion.div>
+    </div>
+  );
+}
+
 function Dots({ n, i }: { n: number; i: number }) {
   return (
     <span className="flex gap-1">
@@ -273,7 +284,7 @@ export function Hero() {
       <div className="hero-wash relative overflow-hidden rounded-[1.75rem] ring-1 ring-inset ring-brand/15">
         <div aria-hidden="true" className="grid-lines pointer-events-none absolute inset-0 opacity-40" />
 
-        <div className="relative px-4 pb-8 pt-10 text-center sm:px-10 sm:pb-14 sm:pt-24 xl:min-h-[820px] xl:pb-[17rem] xl:pt-28">
+        <div className="relative flex min-h-[calc(100svh-5.5rem)] flex-col justify-evenly px-4 pb-6 pt-6 text-center sm:block sm:min-h-0 sm:px-10 sm:pb-14 sm:pt-24 xl:min-h-[820px] xl:pb-[17rem] xl:pt-28">
           <motion.div initial="hidden" animate="show" className="mx-auto max-w-[54rem]">
             <motion.p custom={0} variants={rise} className="inline-flex whitespace-nowrap rounded-xl border border-brand/15 bg-page/85 px-3 py-1.5 text-[10.5px] font-medium uppercase tracking-[0.05em] text-brand shadow-card sm:px-4 sm:py-2 sm:text-[13px] sm:tracking-[0.06em]">
               The AI front desk for small businesses
@@ -294,11 +305,19 @@ export function Hero() {
 
           {/* Under 1280px: the cards in a grid, never over the headline. */}
           {/* Phones: a swipeable row. Tablets: a 2x2 grid. Desktop: floating. */}
-          <div aria-hidden="true" className="no-scrollbar -mx-4 mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 pt-1 text-left sm:mx-auto sm:mt-12 sm:grid sm:max-w-2xl sm:grid-cols-2 sm:overflow-visible sm:px-0 xl:hidden">
+          <div aria-hidden="true" className="mx-auto mt-12 hidden max-w-2xl grid-cols-2 gap-3 text-left sm:grid xl:hidden">
             {[<VaaniCard key="v" />, <BookingCard key="b" />, <InvoiceCard key="i" />, <ReviewCard key="r" />].map((c) => (
-              <div key={c.key} className="shrink-0 snap-center rounded-2xl bg-page p-4 shadow-float">{c}</div>
+              <div key={c.key} className="rounded-2xl bg-page p-4 shadow-float">{c}</div>
             ))}
           </div>
+
+          {/* Phones: the same cards, shrunk and floating as a loose stack. */}
+          <div aria-hidden="true" className="pt-6 sm:hidden"><div className="relative mx-auto h-[250px] w-full max-w-[24rem] text-left">
+            <MiniFloat className="left-0 top-2" origin="top left" rot={-3} delay={0.5}><VaaniCard /></MiniFloat>
+            <MiniFloat className="right-0 top-9" origin="top right" rot={3} delay={0.6}><BookingCard /></MiniFloat>
+            <MiniFloat className="bottom-3 left-1" origin="bottom left" rot={2} delay={0.7}><ReviewCard /></MiniFloat>
+            <MiniFloat className="bottom-12 right-1" origin="bottom right" rot={-2} delay={0.8}><InvoiceCard /></MiniFloat>
+          </div></div>
         </div>
 
         <div aria-hidden="true">

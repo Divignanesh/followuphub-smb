@@ -58,8 +58,8 @@ export function Included() {
               <tr className="border-b border-line">
                 <th scope="col" className="sticky left-0 z-10 bg-page px-5 py-5 text-left text-[13px] font-semibold text-ink-soft sm:px-7">Feature</th>
                 {TOOLS.map((t, i) => (
-                  <th key={t} scope="col" className={cx("px-3 py-5 text-[14px] font-semibold", i === 0 ? "bg-brand-tint" : "text-ink-soft")}>
-                    {i === 0 ? <img src="/images/brand/followuphub-logo.png" alt="FollowUpHub" className="mx-auto h-5 w-auto" /> : t}
+                  <th key={t} scope="col" className={cx("px-3 py-5 text-[14px] font-semibold", i === 0 ? "min-w-[156px] bg-brand-tint" : "text-ink-soft")}>
+                    {i === 0 ? <img src="/images/brand/followuphub-logo.png" alt="FollowUpHub" className="mx-auto h-5 w-auto max-w-none object-contain" /> : t}
                   </th>
                 ))}
               </tr>

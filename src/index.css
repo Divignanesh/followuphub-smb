@@ -178,6 +178,9 @@
 
   /* Gentle bob for floating elements. */
   .float-slow { animation: fuh-float 7s ease-in-out infinite; }
+  /* Phone hero cards: a deeper float with a little swell. */
+  .breathe-card { animation: fuh-breathe-card 4.5s ease-in-out infinite; }
+  @keyframes fuh-breathe-card { 50% { transform: translateY(-14px) scale(1.04); } }
   /* Slow push-in on photos, so still images feel alive. */
   .kenburns { animation: fuh-kenburns 18s ease-in-out infinite alternate; transform-origin: 70% 40%; }
   @keyframes fuh-kenburns { from { transform: scale(1); } to { transform: scale(1.09); } }
@@ -191,7 +194,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .border-beam { display: none; }
-    .float-slow, .kenburns, .breathe, .ripple { animation: none; }
+    .float-slow, .kenburns, .breathe, .ripple, .breathe-card { animation: none; }
     .shine { display: none; }
     .shimmer-slide, .spin-around { animation: none; }
     .marquee { animation: none; }
